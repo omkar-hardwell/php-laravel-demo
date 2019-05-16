@@ -11,6 +11,14 @@ class CRUDDemoController extends Controller
     // Sample of CRUD operations.
 
     /**
+     * CRUDDemoController constructor.
+     */
+    public function __construct(){
+        // User authorization
+        $this->middleware('auth');
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return Home page.
