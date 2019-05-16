@@ -1,6 +1,15 @@
 @extends('master')
 @section('content')
 <div class="container">
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
     <h1>Edit Department</h1>
     <hr />
     <form method="post" action="{{action('CRUDDemoController@update_department', $department_id)}}">
