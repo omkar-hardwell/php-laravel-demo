@@ -49,6 +49,11 @@ class CRUDDemoController extends Controller
      */
     public function save_department(Request $request)
     {
+        // Validating name field
+        $this->validate($request, [
+            'name' => 'required',
+        ]);
+
         $crud = new Department([
             'name' => $request->get('name')
         ]);
@@ -77,6 +82,11 @@ class CRUDDemoController extends Controller
      */
     public function update_department(Request $request, $department_id)
     {
+        // Validating name field
+        $this->validate($request, [
+            'name' => 'required',
+        ]);
+
         Department::where('department_id', '=', $department_id)->update(['name' => $request->get('name')]);
 
         return redirect('/crud/departments');
@@ -127,6 +137,16 @@ class CRUDDemoController extends Controller
      */
     public function save_employee(Request $request)
     {
+        // Validating employee fields
+        $this->validate($request, [
+            'emp_department' => 'required',
+            'emp_name' => 'required',
+            'emp_date_of_joining' => 'required|date|date_format:Y-m-d',
+            'emp_gender' => 'required',
+            'emp_address' => 'required',
+            'emp_salary' => 'required|numeric'
+        ]);
+
         $employee = new Employee([
             'department_id' => $request->get('emp_department'),
             'name' => $request->get('emp_name'),
@@ -161,6 +181,16 @@ class CRUDDemoController extends Controller
      */
     public function update_employee(Request $request, $employee_id)
     {
+        // Validating employee fields
+        $this->validate($request, [
+            'emp_department' => 'required',
+            'emp_name' => 'required',
+            'emp_date_of_joining' => 'required|date|date_format:Y-m-d',
+            'emp_gender' => 'required',
+            'emp_address' => 'required',
+            'emp_salary' => 'required|numeric'
+        ]);
+
         Employee::where('employee_id', '=', $employee_id)
             ->update([
                 'department_id' => $request->get('emp_department'),
