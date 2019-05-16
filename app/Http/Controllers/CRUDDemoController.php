@@ -3,19 +3,34 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Department;
-use App\Employee;
+use App\Http\Services\CRUDDemoServicesDepartment;
+use App\Http\Services\CRUDDemoServicesEmployee;
 
 class CRUDDemoController extends Controller
 {
     // Sample of CRUD operations.
 
     /**
-     * CRUDDemoController constructor.
+     * @var CRUDDemoServicesDepartment|null
      */
-    public function __construct(){
+    protected $department = null;
+
+    /**
+     * @var CRUDDemoServicesEmployee|null
+     */
+    protected $employee = null;
+
+    /**
+     * CRUDDemoController constructor.
+     * @param CRUDDemoServicesDepartment $department
+     * @param CRUDDemoServicesEmployee $employee
+     */
+    public function __construct(CRUDDemoServicesDepartment $department, CRUDDemoServicesEmployee $employee){
         // User authorization
         $this->middleware('auth');
+
+        $this->department = $department;
+        $this->employee = $employee;
     }
 
     /**
@@ -35,7 +50,7 @@ class CRUDDemoController extends Controller
      */
     public function view_departments()
     {
-        $departments = Department::all()->toArray();
+        $departments = $this->department->getDepartment();
 
         return view('showDepartments', compact('departments'));
     }
@@ -62,10 +77,10 @@ class CRUDDemoController extends Controller
             'name' => 'required',
         ]);
 
-        $crud = new Department([
+        $department_details = [
             'name' => $request->get('name')
-        ]);
-        $crud->save();
+        ];
+        $this->department->addDepartment($department_details);
 
         return redirect('/crud/departments');
     }
@@ -77,7 +92,7 @@ class CRUDDemoController extends Controller
      */
     public function edit_department($department_id)
     {
-        $department = Department::where('department_id', $department_id)->first();
+        $department = $this->department->getDepartment($department_id);
 
         return view('editDepartment', compact('department', 'department_id'));
     }
@@ -90,12 +105,14 @@ class CRUDDemoController extends Controller
      */
     public function update_department(Request $request, $department_id)
     {
-        // Validating name field
         $this->validate($request, [
             'name' => 'required',
         ]);
 
-        Department::where('department_id', '=', $department_id)->update(['name' => $request->get('name')]);
+        $department_details = [
+            'name' => $request->get('name')
+        ];
+        $this->department->updateDepartment($department_id, $department_details);
 
         return redirect('/crud/departments');
     }
@@ -107,7 +124,7 @@ class CRUDDemoController extends Controller
      */
     public function delete_department($department_id)
     {
-        Department::where('department_id', '=', $department_id)->delete();
+        $this->department->deleteDepartment($department_id);
 
         return redirect('/crud/departments');
     }
@@ -119,9 +136,7 @@ class CRUDDemoController extends Controller
      */
     public function view_employees()
     {
-        $employees = Employee::join('departments', 'employees.department_id', '=', 'departments.department_id')
-            ->select('employees.employee_id', 'employees.name As emp_name', 'employees.date_of_joining', 'employees.gender', 'employees.address', 'employees.salary', 'departments.name')
-            ->get()->toArray();
+        $employees = $this->employee->getEmployee();
 
         return view('showEmployees', compact('employees'));
     }
@@ -133,7 +148,7 @@ class CRUDDemoController extends Controller
      */
     public function add_employee()
     {
-        $departments = Department::all()->toArray();
+        $departments = $this->department->getDepartment();
 
         return view('addEmployee', compact('departments'));
     }
@@ -155,15 +170,15 @@ class CRUDDemoController extends Controller
             'emp_salary' => 'required|numeric'
         ]);
 
-        $employee = new Employee([
+        $employee_details = [
             'department_id' => $request->get('emp_department'),
             'name' => $request->get('emp_name'),
             'date_of_joining' => $request->get('emp_date_of_joining'),
             'gender' => $request->get('emp_gender'),
             'address' => $request->get('emp_address'),
             'salary' => $request->get('emp_salary')
-        ]);
-        $employee->save();
+        ];
+        $this->employee->addEmployee($employee_details);
 
         return redirect('/crud/employees');
     }
@@ -175,8 +190,8 @@ class CRUDDemoController extends Controller
      */
     public function edit_employee($employee_id)
     {
-        $employee = Employee::where('employee_id', $employee_id)->first();
-        $departments = Department::all()->toArray();
+        $employee = $this->employee->getEmployee($employee_id);
+        $departments = $this->department->getDepartment();
 
         return view('editEmployee', compact('employee', 'employee_id', 'departments'));
     }
@@ -199,15 +214,15 @@ class CRUDDemoController extends Controller
             'emp_salary' => 'required|numeric'
         ]);
 
-        Employee::where('employee_id', '=', $employee_id)
-            ->update([
-                'department_id' => $request->get('emp_department'),
-                'name' => $request->get('emp_name'),
-                'date_of_joining' => $request->get('emp_date_of_joining'),
-                'gender' => $request->get('emp_gender'),
-                'address' => $request->get('emp_address'),
-                'salary' => $request->get('emp_salary')
-            ]);
+        $employee_details = [
+            'department_id' => $request->get('emp_department'),
+            'name' => $request->get('emp_name'),
+            'date_of_joining' => $request->get('emp_date_of_joining'),
+            'gender' => $request->get('emp_gender'),
+            'address' => $request->get('emp_address'),
+            'salary' => $request->get('emp_salary')
+        ];
+        $this->employee->updateEmployee($employee_id, $employee_details);
 
         return redirect('/crud/employees');
     }
@@ -219,7 +234,7 @@ class CRUDDemoController extends Controller
      */
     public function delete_employee($employee_id)
     {
-        Employee::where('employee_id', '=', $employee_id)->delete();
+        $this->employee->deleteEmployee($employee_id);
 
         return redirect('/crud/employees');
     }
