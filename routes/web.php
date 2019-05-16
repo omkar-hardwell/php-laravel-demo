@@ -15,11 +15,6 @@
     return view('welcome');
 });*/
 
-// Home page
-Route::get('/', function () {
-    return view('home');
-});
-
 // Department module routes
 Route::get('crud/departments', 'CRUDDemoController@view_departments');
 Route::get('crud/add_department', 'CRUDDemoController@add_department');
@@ -35,3 +30,7 @@ Route::post('crud/employee', 'CRUDDemoController@save_employee');
 Route::get('crud/edit_employee/{employee_id}', 'CRUDDemoController@edit_employee');
 Route::post('crud/update_employee/{employee_id}', 'CRUDDemoController@update_employee');
 Route::get('crud/delete_employee/{employee_id}', 'CRUDDemoController@delete_employee');
+
+Auth::routes();
+
+Route::get('/', 'HomeController@index')->name('home');
