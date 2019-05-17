@@ -42,20 +42,20 @@ class CRUDDemoServicesDepartment extends Services
 
     /**
      * Add department.
-     * @param $departmentDetail
      */
-    public function addDepartment($departmentDetail)
+    public function addDepartment()
     {
+        $departmentDetail = $this->_request->only('name');
         $this->_repository->addDepartment($departmentDetail);
     }
 
     /**
      * Update department.
      * @param $departmentId
-     * @param $departmentDetail
      */
-    public function updateDepartment($departmentId, $departmentDetail)
+    public function updateDepartment($departmentId)
     {
+        $departmentDetail = $this->_request->only('name');
         $this->_repository->updateDepartment($departmentId, $departmentDetail);
     }
 

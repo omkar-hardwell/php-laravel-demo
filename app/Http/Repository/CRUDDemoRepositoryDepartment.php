@@ -29,7 +29,7 @@ class CRUDDemoRepositoryDepartment extends Repository
      */
     public function getDepartment($departmentId = null)
     {
-        return ($departmentId) ? Department::where('department_id', $departmentId)->first() : Department::all()->toArray();
+        return ($departmentId) ? Department::where('department_id', $departmentId)->first() : Department::all()->sortBy('name')->toArray();
     }
 
     /**
