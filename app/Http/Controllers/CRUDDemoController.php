@@ -11,6 +11,11 @@ class CRUDDemoController extends Controller
     // Sample of CRUD operations.
 
     /**
+     * @var Request|null
+     */
+    protected $request = null;
+
+    /**
      * @var CRUDDemoServicesDepartment|null
      */
     protected $department = null;
@@ -22,13 +27,13 @@ class CRUDDemoController extends Controller
 
     /**
      * CRUDDemoController constructor.
+     * @param Request $request
      * @param CRUDDemoServicesDepartment $department
      * @param CRUDDemoServicesEmployee $employee
      */
-    public function __construct(CRUDDemoServicesDepartment $department, CRUDDemoServicesEmployee $employee){
-        // User authorization
-        $this->middleware('auth');
-
+    public function __construct(Request $request, CRUDDemoServicesDepartment $department, CRUDDemoServicesEmployee $employee)
+    {
+        $this->request = $request;
         $this->department = $department;
         $this->employee = $employee;
     }
@@ -67,20 +72,16 @@ class CRUDDemoController extends Controller
 
     /**
      * Save department detail.
-     * @param $request Request object.
      * @return Department view page.
      */
-    public function save_department(Request $request)
+    public function save_department()
     {
         // Validating name field
-        $this->validate($request, [
+        $this->validate($this->request, [
             'name' => 'required',
         ]);
 
-        $department_details = [
-            'name' => $request->get('name')
-        ];
-        $this->department->addDepartment($department_details);
+        $this->department->addDepartment();
 
         return redirect('/crud/departments');
     }
@@ -99,20 +100,16 @@ class CRUDDemoController extends Controller
 
     /**
      * Update department detail.
-     * @param $request Request object.
      * @param $department_id - Identification of department
      * @return Department view page.
      */
-    public function update_department(Request $request, $department_id)
+    public function update_department($department_id)
     {
-        $this->validate($request, [
+        $this->validate($this->request, [
             'name' => 'required',
         ]);
 
-        $department_details = [
-            'name' => $request->get('name')
-        ];
-        $this->department->updateDepartment($department_id, $department_details);
+        $this->department->updateDepartment($department_id);
 
         return redirect('/crud/departments');
     }
@@ -155,30 +152,21 @@ class CRUDDemoController extends Controller
 
     /**
      * Save department detail.
-     * @param $request Request object.
      * @return Employee view page.
      */
-    public function save_employee(Request $request)
+    public function save_employee()
     {
         // Validating employee fields
-        $this->validate($request, [
-            'emp_department' => 'required',
-            'emp_name' => 'required',
-            'emp_date_of_joining' => 'required|date|date_format:Y-m-d',
-            'emp_gender' => 'required',
-            'emp_address' => 'required',
-            'emp_salary' => 'required|numeric'
+        $this->validate($this->request, [
+            'department_id' => 'required',
+            'name' => 'required',
+            'date_of_joining' => 'required|date|date_format:Y-m-d',
+            'gender' => 'required',
+            'address' => 'required',
+            'salary' => 'required|numeric'
         ]);
 
-        $employee_details = [
-            'department_id' => $request->get('emp_department'),
-            'name' => $request->get('emp_name'),
-            'date_of_joining' => $request->get('emp_date_of_joining'),
-            'gender' => $request->get('emp_gender'),
-            'address' => $request->get('emp_address'),
-            'salary' => $request->get('emp_salary')
-        ];
-        $this->employee->addEmployee($employee_details);
+        $this->employee->addEmployee();
 
         return redirect('/crud/employees');
     }
@@ -198,31 +186,22 @@ class CRUDDemoController extends Controller
 
     /**
      * Update employee detail.
-     * @param $request Request object.
      * @param $employee_id - Identification of employee.
      * @return Employee view page.
      */
-    public function update_employee(Request $request, $employee_id)
+    public function update_employee($employee_id)
     {
         // Validating employee fields
-        $this->validate($request, [
-            'emp_department' => 'required',
-            'emp_name' => 'required',
-            'emp_date_of_joining' => 'required|date|date_format:Y-m-d',
-            'emp_gender' => 'required',
-            'emp_address' => 'required',
-            'emp_salary' => 'required|numeric'
+        $this->validate($this->request, [
+            'department_id' => 'required',
+            'name' => 'required',
+            'date_of_joining' => 'required|date|date_format:Y-m-d',
+            'gender' => 'required',
+            'address' => 'required',
+            'salary' => 'required|numeric'
         ]);
 
-        $employee_details = [
-            'department_id' => $request->get('emp_department'),
-            'name' => $request->get('emp_name'),
-            'date_of_joining' => $request->get('emp_date_of_joining'),
-            'gender' => $request->get('emp_gender'),
-            'address' => $request->get('emp_address'),
-            'salary' => $request->get('emp_salary')
-        ];
-        $this->employee->updateEmployee($employee_id, $employee_details);
+        $this->employee->updateEmployee($employee_id);
 
         return redirect('/crud/employees');
     }

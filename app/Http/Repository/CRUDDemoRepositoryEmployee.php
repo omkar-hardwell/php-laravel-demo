@@ -32,9 +32,9 @@ class CRUDDemoRepositoryEmployee extends Repository
         return ($employeeId) ?
             Employee::where('employee_id', $employeeId)->first() :
             Employee::join('departments', 'employees.department_id', '=', 'departments.department_id')
-            ->select('employees.employee_id', 'employees.name As emp_name', 'employees.date_of_joining',
-                'employees.gender', 'employees.address', 'employees.salary', 'departments.name')
-            ->get()->toArray();
+                ->select('employees.employee_id', 'employees.name As emp_name', 'employees.date_of_joining',
+                    'employees.gender', 'employees.address', 'employees.salary', 'departments.name')
+                ->orderBy('employees.employee_id', 'desc')->get()->toArray();
     }
 
     /**

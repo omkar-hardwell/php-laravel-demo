@@ -42,20 +42,20 @@ class CRUDDemoServicesEmployee extends Services
 
     /**
      * Add employee.
-     * @param $employeeDetail
      */
-    public function addEmployee($employeeDetail)
+    public function addEmployee()
     {
+        $employeeDetail = $this->_request->except('_token');
         $this->_repository->addEmployee($employeeDetail);
     }
 
     /**
      * Update employee.
      * @param $employeeId
-     * @param $employeeDetail
      */
-    public function updateEmployee($employeeId, $employeeDetail)
+    public function updateEmployee($employeeId)
     {
+        $employeeDetail = $this->_request->except('_token');
         $this->_repository->updateEmployee($employeeId, $employeeDetail);
     }
 
